@@ -8,8 +8,9 @@ RUN touch /etc/init.d/functions.sh && \
   echo 'EMERGE_DEFAULT_OPTS="--ask=n --jobs=4"' >> /etc/portage/make.conf && \
   echo 'GENTOO_MIRRORS="http://mirrors.163.com/gentoo http://mirrors.xmu.edu.cn/gentoo"' >> /etc/portage/make.conf
 
-RUN mkdir -p /etc/portage/repos.conf && \
-  ( \ echo '[gentoo]'  && \
+RUN mkdir -p /etc/portage/repos.conf
+RUN ( \
+  echo '[gentoo]'  && \
   echo 'location = /usr/portage' && \
   echo 'sync-type = rsync' && \
   echo 'sync-uri = rsync://rsync.cn.gentoo.org/gentoo-portage' && \
