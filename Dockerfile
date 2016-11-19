@@ -9,6 +9,7 @@ RUN touch /etc/init.d/functions.sh && \
   echo 'GENTOO_MIRRORS="http://mirrors.163.com/gentoo http://mirrors.xmu.edu.cn/gentoo"' >> /etc/portage/make.conf
 
 RUN mkdir -p /etc/portage/repos.conf
+
 RUN ( \
   echo '[gentoo]'  && \
   echo 'location = /usr/portage' && \
@@ -16,12 +17,6 @@ RUN ( \
   echo 'sync-uri = rsync://rsync.cn.gentoo.org/gentoo-portage' && \
   echo 'auto-sync = yes' \ 
   )> /etc/portage/repos.conf/gentoo.conf
-
-# Setup the rc_sys
-RUN sed -e 's/#rc_sys=""/rc_sys="lxc"/g' -i /etc/rc.conf
-
-# By default, UTC system 
-RUN echo 'UTC' > /etc/timezone
 
 # Setup the portage directory and permissions 
 RUN mkdir -p /usr/portage/{distfiles,metadata,packages}
@@ -53,6 +48,8 @@ RUN crossdev -S -v -t aarch64-unknown-linux-gnu --genv 'USE="cxx multilib fortra
 
 RUN emerge distcc
 
+RUN rm -r /usr/portage
+
 RUN ( \
     echo "#!/bin/sh" && \
     echo "eval \"\`gcc-config -E\`\"" && \
@@ -61,3 +58,4 @@ RUN ( \
   chmod +x /usr/local/sbin/distccd-launcher
 CMD ["/usr/local/sbin/distccd-launcher", "--allow", "0.0.0.0/0", "--user", "distcc", "--log-level", "notice", "--log-stderr", "--no-detach"]
 EXPOSE 3632
+
